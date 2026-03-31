@@ -1,0 +1,26 @@
+import subprocess
+import re
+
+ips = [
+#Coloque seus IPs aqui para teste como "123.123.1.123", "321.321.1.321"
+]
+
+for ip in ips:
+    resultado = subprocess.run(
+        ["ping", "-n", "1", ip],
+        capture_output=True,
+        text=True
+    )
+
+    output = resultado.stdout.lower()
+
+    if "ttl=" in output and "inacess" not in output:
+        # pega o tempo (ms)
+        tempo = re.search(r'tempo[=<]\s*(\d+)', output)
+        
+        if tempo:
+            print(f"{ip} ONLINE! - {tempo.group(1)} ms")
+        else:
+            print(f"{ip} ONLINE - tempo nao identificado")
+    else:
+        print(f"{ip} OFFLINE")
